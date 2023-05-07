@@ -9,6 +9,8 @@ let name = ref(null)
 let deck_id = ref(null)
 let error = ref(null)
 
+let baseUrl = "https://www.deckofcardsapi.com/api/deck/"
+
 let players = ref([]);
 
 function addPlayer(name)
@@ -18,10 +20,36 @@ function addPlayer(name)
 
 async function newGame()
 {
-  if (players.value.length > 0)
+  // if (players.value.length > 0)
+  // {
+  let data = await useFetch("new/shuffle/?deck_count=1")
+  deck_id.value = data.deck_id;
+  // }
+
+  let startingDeck = 52;
+  let divisible = players.value.length
+
+  for (let player of players.value)
   {
-    let data = await useFetch("new/shuffle/?deck_count=1")
-    deck_id.value = data.deck_id;
+
+    let playerDeck = Math.floor(startingDeck / divisible)
+    if (startingDeck % divisible > 0)
+    {
+      playerDeck = playerDeck + 1
+    }
+
+    startingDeck = startingDeck - playerDeck
+    divisible = divisible - 1
+
+    let url = `${deck_id.value}/draw/?count=${playerDeck}`
+    let response = await useFetch(url)
+    console.log(url, response)
+    // await setTimeout(console.log("waiting", 500))
+
+    // let remainder = startingDeck % players.value.length;
+    // console.log(deck, remainder)
+
+    // let data = await useFetch(deck_id.value + "/draw/?count=")
   }
 }
 
