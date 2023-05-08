@@ -1,14 +1,4 @@
 import { watchEffect } from 'vue'
-import { ref } from 'vue'
-
-// export function useFetch(url, deck_id)
-// {
-// 	watchEffect(async () =>
-// 	{
-// 		let response = await (await fetch(url)).json()
-// 		deck_id.value = response.deck_id
-// 	})
-// }
 
 export function fetchDeck(deck_id)
 {

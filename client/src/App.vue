@@ -1,57 +1,41 @@
 <script setup>
 
 import { ref } from 'vue'
-import { fetchDeck } from './utility'
-import UserCreator from './components/userCreator.vue'
 import { useFetch } from './utility.js'
+import { dealCards, turnOrder, keyboardHandler } from './newGame.js'
+import { onMounted } from 'vue';
 
+//create player state
 let name = ref(null)
+let players = ref([])
+let currentTurn = ref(1)
+
 let deck_id = ref(null)
-let error = ref(null)
-
-let baseUrl = "https://www.deckofcardsapi.com/api/deck/"
-
-let players = ref([]);
 
 function addPlayer(name)
 {
-  players.value.push(name)
+  players.value.push({ name: name, order: players.value.length + 1 })
 }
 
 async function newGame()
 {
-  // if (players.value.length > 0)
-  // {
-  let data = await useFetch("new/shuffle/?deck_count=1")
-  deck_id.value = data.deck_id;
-  // }
-
-  let startingDeck = 52;
-  let divisible = players.value.length
-
-  for (let player of players.value)
+  //shuffle a deck
+  if (players.value.length > 0)
   {
-
-    let playerDeck = Math.floor(startingDeck / divisible)
-    if (startingDeck % divisible > 0)
-    {
-      playerDeck = playerDeck + 1
-    }
-
-    startingDeck = startingDeck - playerDeck
-    divisible = divisible - 1
-
-    let url = `${deck_id.value}/draw/?count=${playerDeck}`
-    let response = await useFetch(url)
-    console.log(url, response)
-    // await setTimeout(console.log("waiting", 500))
-
-    // let remainder = startingDeck % players.value.length;
-    // console.log(deck, remainder)
-
-    // let data = await useFetch(deck_id.value + "/draw/?count=")
+    let data = await useFetch("new/shuffle/?deck_count=1")
+    deck_id.value = data.deck_id;
   }
+
+  //sort by turn order
+  players.value = turnOrder(players.value);
+
+  dealCards(players.value, deck_id.value);
+
+  document.addEventListener("keydown", keyboardHandler)
+
 }
+
+
 
 </script>
 
@@ -101,7 +85,7 @@ async function newGame()
   display: flex;
   justify-content: space-between;
   max-width: 1200px;
-  background-color: blue;
+  background-color: lightblue;
   margin: 0 auto;
 }
 
