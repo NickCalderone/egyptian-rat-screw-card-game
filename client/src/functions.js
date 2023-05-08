@@ -1,15 +1,36 @@
 import { useFetch } from "./utility";
 
+
+export function nameWarning(name, players){
+	console.log(name, players)
+	if (!players.some((player) => player.name === name)){
+		return null
+	} else {
+		return "Choose a unique name"
+	}
+}
+
+export function addPlayer(name, players)
+{
+	if (!players.some((player) => player.name === name)){
+		players.push({ name: name, order: players.length })
+		name = null;
+	} else {
+		console.log("Choose a unique name")
+	}
+}
+
+
 export function turnOrder(players)
 {
 	return players.sort((a, b) =>
 	{
 		if (a.order > b.order)
 		{
-			return -1
+			return 1
 		} else if (a.order < b.order)
 		{
-			return 1
+			return -1
 		} else return 0
 	})
 
@@ -37,6 +58,7 @@ export async function dealCards(players, deck_id)
 	let startingDeck = 52;
 	let divisible = players.length
 
+	//for loops are synchronous so work well for making fetch requests in order, as opposed to forEach
 	for (let player of players)
 	{
 

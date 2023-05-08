@@ -2,20 +2,14 @@
 
 import { ref } from 'vue'
 import { useFetch } from './utility.js'
-import { dealCards, turnOrder, keyboardHandler } from './newGame.js'
-import { onMounted } from 'vue';
+import { dealCards, turnOrder, keyboardHandler, nameWarning, addPlayer } from './functions.js'
 
 //create player state
 let name = ref(null)
 let players = ref([])
-let currentTurn = ref(1)
+let currentTurn = ref(0)
 
 let deck_id = ref(null)
-
-function addPlayer(name)
-{
-  players.value.push({ name: name, order: players.value.length + 1 })
-}
 
 async function newGame()
 {
@@ -35,7 +29,10 @@ async function newGame()
 
 }
 
-
+function handleAddPlayer(){
+  addPlayer(name.value, players.value)
+  name.value = null
+}
 
 </script>
 
@@ -48,8 +45,10 @@ async function newGame()
 
   <main>
     <div class="settings">
-      <input v-model="name" placeholder="Name" />
-      <button @click="addPlayer(name)">make user</button>
+      <p>{{ nameWarning(name, players) }}</p>
+      <input v-model="name" placeholder="Name"/>
+      <!-- no need to use players.value within templates, only in scripts above -->
+      <button @click="handleAddPlayer">make user</button>
       <br />
       <button @click="newGame">Start a New Game</button>
     </div>
